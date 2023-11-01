@@ -58,3 +58,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .sidebar {
+    @apply sticky top-0 min-h-screen w-64 bg-lime-100 px-2 py-8;
+  }
+
+  .upload {
+    @apply flex w-full max-w-md flex-col items-center gap-y-4 border border-dashed border-black p-8;
+  }
+}

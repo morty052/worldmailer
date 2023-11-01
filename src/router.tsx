@@ -1,15 +1,33 @@
 import React from 'react'
-import { createHashRouter, RouteObject } from 'react-router-dom'
+import { createHashRouter, createRoutesFromElements, createBrowserRouter, Route } from 'react-router-dom'
 import ErrorPage from './components/error-page'
 import { getDefaultLayout } from './components/layout'
 import HomePage from './pages/home'
+import { Dashboard } from './pages'
 
-export const routerObjects: RouteObject[] = [
+type routes = {
+  path: string
+  Component: React.ReactElement
+}
+
+export const routerObjects: routes[] = [
   {
     path: '/',
-    Component: HomePage,
+    Component: <HomePage />,
+  },
+  {
+    path: '/dashboard',
+    Component: <Dashboard />,
   },
 ]
+
+export const router = createBrowserRouter(
+  createRoutesFromElements(
+    routerObjects.map((route, index) => {
+      return <Route key={index} path={route.path} element={route.Component} />
+    }),
+  ),
+)
 
 export function createRouter(): ReturnType<typeof createHashRouter> {
   const routeWrappers = routerObjects.map((router) => {
@@ -24,5 +42,6 @@ export function createRouter(): ReturnType<typeof createHashRouter> {
       ErrorBoundary: ErrorPage,
     }
   })
+
   return createHashRouter(routeWrappers)
 }
