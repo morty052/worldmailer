@@ -54,7 +54,7 @@ const baseUrl = `https://`
 
 const Welcome = (props: emailProps) => {
   const previewText = `Join ${'invitedByUsername'} on Vercel`
-  const { username } = props ?? props
+  const { username, link } = props ?? props
 
   return (
     <Html>
@@ -101,7 +101,7 @@ const Welcome = (props: emailProps) => {
             <Section className="mb-[32px] mt-[32px] text-center">
               <Button
                 className="rounded bg-[#000000] px-10 py-4 text-center text-[12px] font-semibold text-white no-underline"
-                href={''}
+                href={link}
               >
                 Join the team
               </Button>

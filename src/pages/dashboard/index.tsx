@@ -3,7 +3,8 @@ import { Button } from 'src/components/ui/button'
 import { Upload } from 'lucide-react'
 import { useState, useReducer } from 'react'
 import { dashboardReducer, dashboardState } from './reducer'
-import { Employment } from '../emailtemplates/Employment'
+import TemplateGrid from '../emailtemplates/TemplateGrid'
+import { useNavigate } from 'react-router-dom'
 
 function handleUpload() {
   const fileInput = document.getElementById('fileInput') as HTMLInputElement
@@ -35,7 +36,7 @@ async function invoke_protocol(file: string) {
 
 function SideBar({ invoke_protocol }: { invoke_protocol: () => void }) {
   return (
-    <div className="sidebar  flex flex-col space-y-8 shadow-2xl shadow-lime-900">
+    <div className="sidebar  ">
       <Button className="bg-lime-300 text-black" onClick={invoke_protocol}>
         Invoke protocol
       </Button>
@@ -95,8 +96,9 @@ function UploadView({
   sendEmails: () => void
 }) {
   return (
-    <div className="">
-      <div className="upload">
+    <div className="p-4">
+      <Steps ActiveStep="1" />
+      <div className="upload mt-8">
         <Upload color="gray" size={100} />
         <input onChange={(e) => uploadTextFile(e.target)} type="file" id="fileInput" />
         {/* <Button onClick={handleUpload}> upload emails</Button> */}
@@ -112,7 +114,7 @@ function SelectTemplate({ confirmTemplate }: { confirmTemplate: () => void }) {
       <div className="my-4 w-full">
         <h3 className="text-center">Select Template</h3>
       </div>
-      <Employment />
+      <TemplateGrid active="EMPLOYMENT" />
       <div className="mx-auto flex  max-w-md justify-center">
         <Button onClick={confirmTemplate}>Confirm</Button>
       </div>
@@ -120,22 +122,67 @@ function SelectTemplate({ confirmTemplate }: { confirmTemplate: () => void }) {
   )
 }
 
-function EmailPreview({ emails, handleEndPreview }: { emails: null | string[]; handleEndPreview: () => void }) {
+type personalizedMail = {
+  username: string
+  email: string
+}
+
+function EmailPreview({ emails, handleEndPreview }: { emails: string[]; handleEndPreview: () => void }) {
+  const [personalized, setPersonalized] = useState<null | personalizedMail[]>(null)
+
+  function handleEmailPersonalization(email: string | undefined) {
+    const cleanEmail = email.replace(/\d*@(.*?)(?:\.|$).*/, '')
+    console.log(cleanEmail)
+  }
+
+  function GetPersonalizedMails() {
+    const personalizedMails = emails?.map((email: string) => {
+      const cleanEmail = email.replace(/\d*@(.*?)(?:\.|$).*/, '')
+      return {
+        username: cleanEmail,
+        email: email,
+      }
+    })
+
+    // const emailAndUsernames = [...personalizedMails, ...emails]
+
+    console.log(personalizedMails)
+    setPersonalized(personalizedMails)
+    return personalizedMails
+  }
+
   function EmailView() {
     return (
       <div className="  mx-auto flex max-w-xl flex-col items-center justify-center gap-y-6 bg-white p-4">
-        <div className="">
-          {emails?.map((email: string, index: number) => {
-            const count = index + 1
+        {!personalized && (
+          <div className="">
+            {emails?.map((email: string, index: number) => {
+              const count = index + 1
 
-            return (
-              <div key={index} className="flex items-center gap-x-2">
-                <p>{count}</p>
-                <p>{email}</p>
-              </div>
-            )
-          })}
-        </div>
+              return (
+                <div key={index} className="flex items-center gap-x-2">
+                  <p>{count}</p>
+                  <p>{email}</p>
+                </div>
+              )
+            })}
+          </div>
+        )}
+        {personalized && (
+          <div className="">
+            {personalized?.map((email: personalizedMail, index: number) => {
+              const count = index + 1
+
+              return (
+                <div key={index} className="flex items-center gap-x-2">
+                  <p>{count}</p>
+                  <p>{email.email}</p>
+                  <p>{email.username}</p>
+                </div>
+              )
+            })}
+          </div>
+        )}
         <Button onClick={handleEndPreview}>Confirm emails</Button>
       </div>
     )
@@ -146,26 +193,51 @@ function EmailPreview({ emails, handleEndPreview }: { emails: null | string[]; h
       <div className="h-screen bg-red-300 px-2">
         <Steps ActiveStep="1" />
         <EmailView />
+        <Button onClick={() => GetPersonalizedMails()}>Personalize emails</Button>
       </div>
     </>
   )
 }
 
-function LinkSelect({ confirmLink }: { confirmLink: () => void }) {
+function LinkSelect({ confirmLink }: { confirmLink: (link: string) => void }) {
+  const links = [
+    {
+      name: 'Vercel',
+      url: 'https://vercel.com',
+    },
+    {
+      name: 'Supabase',
+      url: 'https://supabase.com',
+    },
+  ]
+
   return (
     <div className="px-2">
       <Steps ActiveStep="3" />
-      <Button onClick={confirmLink}>Select Link</Button>
+      <div className="mx-auto flex max-w-md flex-col items-center gap-y-8 bg-blue-400 py-4">
+        <div className="">
+          {links.map((link) => (
+            <div onClick={() => confirmLink(link.url)} key={link.name} className="flex items-center gap-x-2">
+              <p>{link.name}</p>
+              <p>{link.url}</p>
+            </div>
+          ))}
+        </div>
+        <div className="flex gap-x-2">
+          <input className="rounded-lg px-2 placeholder:text-sm" placeholder="Enter custom Link" type="text" />
+          <Button onClick={() => null}>Select Link</Button>
+        </div>
+      </div>
     </div>
   )
 }
 
-function PreviewSend() {
+function PreviewSend({ handleSend }: { handleSend: () => void }) {
   return (
     <>
       <Steps ActiveStep="4" />
       <div className="mx-auto flex max-w-md justify-center">
-        <Button>Confirm Sens</Button>
+        <Button onClick={handleSend}>Confirm Send</Button>
       </div>
     </>
   )
@@ -176,11 +248,21 @@ export function Dashboard() {
   const [emails, setEmails] = useState<null | string[]>(null)
 
   const [state, dispatch] = useReducer(dashboardReducer, dashboardState)
+  const navigate = useNavigate()
+
+  const { uploaded, previewingEmails, previewingTemplate, selectingLink, sending, template, link } = state
 
   async function sendEmails() {
     await supabase.functions.invoke('email_handler', {
-      body: { emailArray: emails },
+      body: { emailArray: emails, link, template },
     })
+  }
+
+  function handleDoneUpload(emails: any) {
+    setEmails(emails)
+    console.log(emails)
+    dispatch({ type: 'UPLOADED', payload: { emails } })
+    // navigate('emailpreview')
   }
   function uploadTextFile(fileInput: HTMLInputElement): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -195,9 +277,7 @@ export function Dashboard() {
       reader.onload = async (event) => {
         const fileContent = event.target?.result as string
         const emails = await invoke_protocol(fileContent)
-        setEmails(emails)
-        console.log(emails)
-        dispatch({ type: 'UPLOADED', payload: { emails } })
+        handleDoneUpload(emails)
         resolve(fileContent)
       }
 
@@ -213,38 +293,47 @@ export function Dashboard() {
     dispatch({ type: 'END_EMAIL_PREVIEW' })
   }
 
-  function handleSelectTemplate() {
-    dispatch({ type: 'SELECT_TEMPLATE' })
+  function handleSelectTemplate(template) {
+    dispatch({ type: 'SELECT_TEMPLATE', payload: { template } })
   }
 
-  function handleSelectLink() {
-    dispatch({ type: 'SELECT_LINK' })
+  function handleSelectLink(link: string) {
+    dispatch({ type: 'SELECT_LINK', payload: { link } })
   }
-
-  const { uploaded, previewingEmails, previewingTemplate, selectingLink, sending } = state
 
   return (
-    <>
-      {!uploaded && (
-        <main className="flex  h-screen  ">
-          <SideBar invoke_protocol={() => invoke_protocol()} />
-          <section className="container mx-auto max-w-7xl   p-2">
-            <Steps ActiveStep="1" />
-            <div className="flex h-3/4 flex-col items-center justify-center  pb-20">
+    <div className="layout ">
+      <SideBar invoke_protocol={() => invoke_protocol()} />
+      <div className=" ml-[210px]  border border-green-300">
+        {!uploaded && (
+          <UploadView uploadTextFile={uploadTextFile} sendEmails={sendEmails} emails={emails} setEmails={setEmails} />
+        )}
+        {previewingEmails && <EmailPreview handleEndPreview={handleEndEmailPreview} emails={emails} />}
+        {previewingTemplate && <TemplateGrid confirmTemplate={(template) => handleSelectTemplate(template)} />}
+        {selectingLink && <LinkSelect confirmLink={(link) => handleSelectLink(link)} />}
+        {sending && <PreviewSend handleSend={sendEmails} />}
+
+        {/* <Routes>
+          <Route
+            path="/"
+            element={
               <UploadView
                 uploadTextFile={uploadTextFile}
                 sendEmails={sendEmails}
                 emails={emails}
                 setEmails={setEmails}
               />
-            </div>
-          </section>
-        </main>
-      )}
-      {previewingEmails && <EmailPreview handleEndPreview={handleEndEmailPreview} emails={emails} />}
-      {previewingTemplate && <SelectTemplate confirmTemplate={handleSelectTemplate} />}
-      {selectingLink && <LinkSelect confirmLink={handleSelectLink} />}
-      {sending && <PreviewSend />}
-    </>
+            }
+          />
+          <Route
+            path="/emailpreview"
+            element={<EmailPreview handleEndPreview={handleEndEmailPreview} emails={emails} />}
+          />
+          <Route path="/template" element={<TemplateGrid confirmTemplate={handleSelectTemplate} />} />
+          <Route path="/selectlink" element={<LinkSelect confirmLink={(link) => handleSelectLink(link)} />} />
+          <Route path="/send" element={<PreviewSend handleSend={sendEmails} />} />
+        </Routes> */}
+      </div>
+    </div>
   )
 }

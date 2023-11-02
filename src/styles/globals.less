@@ -60,11 +60,14 @@
 }
 
 @layer components {
+  .layout {
+    @apply mx-auto flex min-h-screen max-w-7xl flex-col;
+  }
   .sidebar {
-    @apply sticky top-0 min-h-screen w-64 bg-lime-100 px-2 py-8;
+    @apply fixed inset-y-0  flex   w-52 flex-col space-y-8 bg-lime-100 px-2 py-8 shadow-2xl shadow-lime-900;
   }
 
   .upload {
-    @apply flex w-full max-w-md flex-col items-center gap-y-4 border border-dashed border-black p-8;
+    @apply mx-auto flex w-full max-w-md flex-col items-center gap-y-4 border border-dashed border-black p-8;
   }
 }

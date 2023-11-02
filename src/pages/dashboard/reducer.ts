@@ -20,9 +20,9 @@ export function dashboardReducer(state, action) {
     case 'END_EMAIL_PREVIEW':
       return { ...state, previewingEmails: false, previewingTemplate: true }
     case 'SELECT_TEMPLATE':
-      return { ...state, template: action.payload, previewingTemplate: false, selectingLink: true }
+      return { ...state, template: action.payload.template, previewingTemplate: false, selectingLink: true }
     case 'SELECT_LINK':
-      return { ...state, link: action.payload, selectingLink: false, sending: true }
+      return { ...state, link: action.payload.link, selectingLink: false, sending: true }
     default:
       break
   }

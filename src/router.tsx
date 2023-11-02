@@ -16,7 +16,7 @@ export const routerObjects: routes[] = [
     Component: <HomePage />,
   },
   {
-    path: '/dashboard',
+    path: '/dashboard/*',
     Component: <Dashboard />,
   },
 ]

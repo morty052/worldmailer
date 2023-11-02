@@ -15,13 +15,33 @@ const props = {
   username: 'neal',
 }
 
-async function send(to: string) {
+type emailTemplateNames = 'EMPLOYMENT' | 'NOTION'
+
+const determineTemplate = (template: emailTemplateNames) => {
+  let Template
+  switch (template) {
+    case 'EMPLOYMENT':
+      Template = Welcome
+      break
+    case 'NOTION':
+      Template = Welcome
+      break
+    default:
+      break
+  }
+
+  return Template
+}
+
+async function send(to, props) {
+  const { template } = props
+  const EmailTemplate = determineTemplate(template)
   try {
     const data = await resend.emails.send({
       from: 'Getting serious <onboarding@pguild.xyz>',
       to: [`${to}`],
       subject: 'Now sending bulk emails',
-      react: Welcome(props),
+      react: EmailTemplate(props),
     })
 
     console.log(data)
@@ -37,11 +57,15 @@ Deno.serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
-  const { emailArray } = await req.json()
+  const { emailArray, link, template } = await req.json()
 
-  console.log(emailArray)
+  const emailprops = {
+    link,
+    template,
+  }
+
   emailArray.forEach(async (email: string) => {
-    await send(email)
+    await send(email, emailprops)
   })
 
   const data = {
