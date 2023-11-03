@@ -1,28 +1,23 @@
-import React, { ReactNode } from 'react'
-import { LanguageSelector } from '../language-selector'
-import { Button } from '../ui/button'
-import { useTranslation } from 'react-i18next'
-import { Github } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
-interface IProps {
-  leftNode?: ReactNode
-}
-export function Header(props: IProps) {
-  const { t } = useTranslation()
-
+export function Header() {
   return (
-    <div className="fixed left-0 top-0 flex w-full items-center justify-between border bg-slate-50 bg-opacity-70 px-4 py-4 md:px-12">
-      <a href="/" className="text-xs md:text-base">
-        Vite React TS Tailwind Starter
-      </a>
-      <div className="flex items-center gap-4">
-        <LanguageSelector />
-        <Button size={'icon'} asChild className="rounded-full">
-          <a href="https://github.com/Quilljou/vite-react-ts-tailwind-starter" target="_blank" rel="noreferrer">
-            <Github />
-          </a>
-        </Button>
-      </div>
-    </div>
+    <nav className="fixed inset-x-0 bg-black">
+      <section className="mx-auto flex max-w-[1440px] justify-between p-4 ">
+        <span className="text-2xl font-semibold text-white">Evol Genius</span>
+        <div className="flex gap-x-6">
+          <Link to={'/bulkmail'} className=" font-semibold text-white">
+            Bulk Mail
+          </Link>
+          <span className=" font-semibold text-white">Single Mail</span>
+          <Link to={'/emaillookup'} className=" font-semibold text-white">
+            Validate Email
+          </Link>
+          <Link to={'/phonelookup'} className=" font-semibold text-white">
+            Validate Phone
+          </Link>
+        </div>
+      </section>
+    </nav>
   )
 }

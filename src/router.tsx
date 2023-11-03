@@ -3,7 +3,7 @@ import { createHashRouter, createRoutesFromElements, createBrowserRouter, Route 
 import ErrorPage from './components/error-page'
 import { getDefaultLayout } from './components/layout'
 import HomePage from './pages/home'
-import { Dashboard } from './pages'
+import { Dashboard, EmailLookup } from './pages'
 
 type routes = {
   path: string
@@ -16,8 +16,12 @@ export const routerObjects: routes[] = [
     Component: <HomePage />,
   },
   {
-    path: '/dashboard/*',
+    path: '/bulkmail/*',
     Component: <Dashboard />,
+  },
+  {
+    path: '/emaillookup/*',
+    Component: <EmailLookup />,
   },
 ]
 

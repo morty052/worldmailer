@@ -26,18 +26,25 @@ function TemplateGrid({ confirmTemplate }: Props) {
   ]
 
   return (
-    <div className="mx-auto w-full max-w-lg ">
-      <h3 className="text-center">Select Template</h3>
-      <p className="text-center">click on any template to preview it</p>
-      <div className="mb-8 flex justify-center gap-x-2">
-        {templates.map((template) => (
-          <span key={template.name} onClick={() => setPreviewing(template.name as emailTemplateNames)}>
-            {template.name}
-          </span>
-        ))}
+    <div className="flex w-full flex-col  ">
+      <div className="py-4">
+        <h3 className="text-center text-2xl font-semibold">Select Template</h3>
+        <p className="text-center">
+          click on any template to preview it. <br /> then click confirm to use template for your email
+        </p>
       </div>
-      {TemplateTable[previewing]}
-      <Button onClick={() => confirmTemplate(previewing)}>Confirm</Button>
+
+      <div className="mx-auto grid  max-w-4xl grid-cols-6 items-start gap-x-4">
+        <div className="col-span-2 flex flex-col  gap-x-2 bg-red-300">
+          {templates.map((template) => (
+            <span key={template.name} onClick={() => setPreviewing(template.name as emailTemplateNames)}>
+              {template.name}
+            </span>
+          ))}
+          <Button onClick={() => confirmTemplate(previewing)}>Confirm</Button>
+        </div>
+        <div className="col-span-4 bg-blue-400">{TemplateTable[previewing]}</div>
+      </div>
     </div>
   )
 }

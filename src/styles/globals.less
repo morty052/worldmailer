@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gugi&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -50,24 +53,32 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
+  // * {
+  //   @apply border-border;
+  // }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-inherit font-space_grotesk text-foreground;
   }
 }
 
 @layer components {
   .layout {
-    @apply mx-auto flex min-h-screen max-w-7xl flex-col;
+    @apply mx-auto flex h-screen max-w-7xl flex-col;
+  }
+  .layout_dashboard {
+    @apply ml-64 flex min-h-screen max-w-7xl flex-col;
   }
   .sidebar {
-    @apply fixed inset-y-0  flex   w-52 flex-col space-y-8 bg-lime-100 px-2 py-8 shadow-2xl shadow-lime-900;
+    @apply fixed inset-y-0  flex    flex-col space-y-8 bg-lime-100 px-2 py-8 shadow-2xl shadow-lime-900;
   }
 
   .upload {
     @apply mx-auto flex w-full max-w-md flex-col items-center gap-y-4 border border-dashed border-black p-8;
   }
+}
+
+.radial_bg {
+  // background: rgb(2, 0, 36);
+  background: radial-gradient(circle, rgba(8, 3, 92, 1) 0%, rgba(0, 0, 0, 0) 60%);
 }

@@ -65,6 +65,10 @@ module.exports = {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
       },
+      fontFamily: {
+        space_grotesk: ['Space Grotesk', 'sans-serif'],
+        gugi: ['Gugi', 'sans-serif'],
+      },
     },
   },
   plugins: [require('tailwindcss-animate')],
