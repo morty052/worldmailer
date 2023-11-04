@@ -12,11 +12,15 @@ type Props = {
     logo,
     email,
     name,
+    subject,
+    from,
   }: {
     TemplateName: emailTemplateNames
     logo: string
     email: string
     name: string
+    subject: string
+    from: string
   }) => void
 }
 
@@ -27,6 +31,8 @@ function TemplateGrid({ confirmTemplate }: Props) {
     name: '',
     email: '',
     logo: '',
+    subject: '',
+    from: '',
   })
   const TemplateTable = {
     EMPLOYMENT: <Employment teamImage={company.logo} companyEmail={company.email} teamName={company.name} />,
@@ -50,10 +56,10 @@ function TemplateGrid({ confirmTemplate }: Props) {
   async function uploadImagefile(file: File) {
     // Add your logic here to handle the image file upload
     console.log(file)
-    const { data, error } = await supabaseReal.storage.from('logos').upload('public/avatar8.png', file)
+    const { data, error } = await supabaseReal.storage.from('logos').upload('public/avatar9.png', file)
     console.log(data, error)
 
-    const { data: url } = await supabaseReal.storage.from('logos').getPublicUrl('public/avatar8.png')
+    const { data: url } = await supabaseReal.storage.from('logos').getPublicUrl('public/avatar9.png')
     console.log(url)
 
     setCompany({
@@ -96,9 +102,16 @@ function TemplateGrid({ confirmTemplate }: Props) {
     <div className="flex w-full flex-col  ">
       <div className="py-4">
         <h3 className="text-center text-2xl font-semibold">Select Template</h3>
-        <p className="text-center">
-          click on any template to preview it. <br /> then click confirm to use template for your email
-        </p>
+        {!editing && (
+          <p className="text-center">
+            click on any template to preview it. <br /> then click confirm to use template for your email
+          </p>
+        )}
+        {editing && (
+          <p className="text-center">
+            Customize your template to suit your needs , <br /> including email subject and company logo
+          </p>
+        )}
       </div>
 
       {/* DEFAULT VIEW */}
@@ -125,9 +138,14 @@ function TemplateGrid({ confirmTemplate }: Props) {
       {/* EDIT VIEW */}
       {editing && (
         <div className="mx-auto grid max-w-4xl grid-cols-8 items-stretch gap-x-4">
-          <div className="col-span-3 flex flex-col gap-y-4 border px-4 pt-8">
-            <Button onClick={() => setEditing(false)}>Back</Button>
-            <form className="space-y-4">
+          <div className="col-span-3 flex flex-col gap-y-4 border px-4 pt-4">
+            {/* SWITCH TEMPLATE BUTTON */}
+            <a onClick={() => setEditing(false)} className="">
+              <span>&#8592; Switch Template</span>
+            </a>
+            {/* FORM */}
+            <form className="space-y-4 pt-4">
+              {/* COMPANY NAME */}
               <div className="">
                 <label htmlFor=""></label>
                 <input
@@ -138,6 +156,8 @@ function TemplateGrid({ confirmTemplate }: Props) {
                   type="text"
                 />
               </div>
+
+              {/* COMPANY EMAIL */}
               <div className="">
                 <label htmlFor=""></label>
                 <input
@@ -148,10 +168,36 @@ function TemplateGrid({ confirmTemplate }: Props) {
                   type="text"
                 />
               </div>
+
+              {/* COMPANY SUBJECT */}
+              <div className="">
+                <label htmlFor=""></label>
+                <input
+                  value={company.subject}
+                  onChange={(e) => setCompany({ ...company, subject: e.target.value })}
+                  className="rounded border p-2"
+                  placeholder="Subject"
+                  type="text"
+                />
+              </div>
+
+              {/* COMPANY FROM */}
+              <div className="">
+                <label htmlFor=""></label>
+                <input
+                  value={company.from}
+                  onChange={(e) => setCompany({ ...company, from: e.target.value })}
+                  className="rounded border p-2"
+                  placeholder="From"
+                  type="text"
+                />
+              </div>
+
               {/* company image input*/}
               <label htmlFor="">upload image</label>
               <input onChange={(e) => uploadImagefile(e.target.files?.[0])} type="file" />
             </form>
+            {/* FORM END */}
             <Button
               onClick={() =>
                 confirmTemplate({
@@ -159,13 +205,28 @@ function TemplateGrid({ confirmTemplate }: Props) {
                   logo: company.logo,
                   email: company.email,
                   name: company.name,
+                  subject: company.subject,
+                  from: company.from,
                 })
               }
             >
               Confirm
             </Button>
           </div>
-          <div className="col-span-5 border px-4">{TemplateTable[previewing]}</div>
+          <div className="col-span-5 border px-4">
+            <div className="py-4">
+              <p>
+                {' '}
+                <span className="font-semibold">Subject:</span> {company.subject}
+              </p>
+              <p>
+                {' '}
+                <span className="font-semibold">From: </span>
+                {company.from}
+              </p>
+            </div>
+            <div className="">{TemplateTable[previewing]}</div>
+          </div>
         </div>
       )}
       {/* EDIT VIEW END */}

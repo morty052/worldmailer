@@ -56,8 +56,8 @@ type emailProps = {
 const baseUrl = `https://`
 
 const Welcome = (props: emailProps) => {
-  const previewText = `Join ${'invitedByUsername'} on Vercel`
   const { username, link, logo, teamName, companyEmail } = props ?? props
+  const previewText = `Come work for us at  ${teamName} `
 
   return (
     <Html>

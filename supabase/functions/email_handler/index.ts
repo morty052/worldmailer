@@ -34,13 +34,13 @@ const determineTemplate = (template: emailTemplateNames) => {
 }
 
 async function send(to, props) {
-  const { TemplateName, subject } = props
+  const { TemplateName, subject, from } = props
   const EmailTemplate = determineTemplate(TemplateName)
   try {
     const data = await resend.emails.send({
-      from: 'Getting serious <onboarding@pguild.xyz>',
+      from: `${from} <onboarding@pguild.xyz>`,
       to: [`${to}`],
-      subject: 'Now sending bulk emails',
+      subject: `${subject}`,
       react: EmailTemplate(props),
     })
 
@@ -58,10 +58,12 @@ Deno.serve(async (req) => {
   }
 
   const { emailArray, link, template } = await req.json()
-  const { logo, name, TemplateName, email } = template
+  const { logo, name, TemplateName, email, subject, from } = template
   console.log(template)
 
   const emailprops = {
+    subject,
+    from,
     link,
     TemplateName,
     logo,
