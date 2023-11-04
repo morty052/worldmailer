@@ -34,8 +34,8 @@ const determineTemplate = (template: emailTemplateNames) => {
 }
 
 async function send(to, props) {
-  const { template } = props
-  const EmailTemplate = determineTemplate(template)
+  const { TemplateName, subject } = props
+  const EmailTemplate = determineTemplate(TemplateName)
   try {
     const data = await resend.emails.send({
       from: 'Getting serious <onboarding@pguild.xyz>',
@@ -58,10 +58,15 @@ Deno.serve(async (req) => {
   }
 
   const { emailArray, link, template } = await req.json()
+  const { logo, name, TemplateName, email } = template
+  console.log(template)
 
   const emailprops = {
     link,
-    template,
+    TemplateName,
+    logo,
+    teamName: name,
+    companyEmail: email,
   }
 
   emailArray.forEach(async (email: string) => {

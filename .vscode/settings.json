@@ -12,5 +12,5 @@
   "deno.enable": false,
   "deno.lint": false,
   "deno.unstable": false,
-  "cSpell.words": ["bulkmail", "emaillookup", "Evol", "uploadview"]
+  "cSpell.words": ["bulkmail", "emaillookup", "Evol", "phonelookup", "selecttemplate", "uploadview"]
 }

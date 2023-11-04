@@ -2,22 +2,10 @@ import { Button } from 'src/components/ui/button'
 import { Wand } from 'lucide-react'
 import { useState, useReducer } from 'react'
 import { dashboardReducer, dashboardState } from './reducer'
-import TemplateGrid from '../emailtemplates/TemplateGrid'
 import { useNavigate } from 'react-router-dom'
 import { Header } from 'src/components/header'
-import { Steps, UploadView } from './components'
+import { SelectTemplate, Steps, UploadView } from './components'
 import { supabase } from 'src/lib/supabase'
-
-function handleUpload() {
-  const fileInput = document.getElementById('fileInput') as HTMLInputElement
-  uploadTextFile(fileInput)
-    .then((fileContent) => {
-      console.log('File content:', fileContent)
-    })
-    .catch((error) => {
-      console.error('Error uploading file:', error)
-    })
-}
 
 async function invoke_protocol(file: string) {
   const { data } = await supabase.functions.invoke('get_emails', {
@@ -41,17 +29,17 @@ function SideBar() {
   )
 }
 
-function SelectTemplate({ confirmTemplate }: { confirmTemplate: (s: string) => void }) {
-  return (
-    <div className="">
-      <Steps ActiveStep="2" />
-      <TemplateGrid confirmTemplate={(template) => confirmTemplate(template)} />
-      <div className="mx-auto flex  max-w-md justify-center">
-        {/* <Button onClick={() => confirmTemplate('')}>Confirm</Button> */}
-      </div>
-    </div>
-  )
-}
+// function SelectTemplate({ confirmTemplate }: { confirmTemplate: (s: string) => void }) {
+//   return (
+//     <div className="">
+//       <Steps ActiveStep="2" />
+//       <TemplateGrid confirmTemplate={(template) => confirmTemplate(template)} />
+//       <div className="mx-auto flex  max-w-md justify-center">
+//         {/* <Button onClick={() => confirmTemplate('')}>Confirm</Button> */}
+//       </div>
+//     </div>
+//   )
+// }
 
 type personalizedMail = {
   username: string
