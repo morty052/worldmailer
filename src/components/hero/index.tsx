@@ -18,7 +18,7 @@ export const Hero = () => {
 
         <div className="mt-6 hidden lg:block">
           <Link
-            to={'/dashboard'}
+            to={'/bulkmail'}
             className="flex max-w-xs justify-center rounded-xl border border-sky-500 px-6 py-4 text-4xl font-semibold text-gray-50 duration-150 ease-in hover:border-2 hover:border-lime-300 hover:bg-white hover:text-gray-800"
           >
             Get Started <span className="ml-2">&#8594;</span>

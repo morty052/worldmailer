@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom'
 import { Header } from 'src/components/header'
 import { SelectTemplate, Steps, UploadView } from './components'
 import { supabase } from 'src/lib/supabase'
+import { useUser } from '@clerk/clerk-react'
+import Papa from 'papaparse'
 
 async function invoke_protocol(file: string) {
   const { data } = await supabase.functions.invoke('get_emails', {
@@ -178,9 +180,14 @@ function PreviewSend({ handleSend }: { handleSend: () => void }) {
 export function Dashboard() {
   const [file, setfile] = useState('')
   const [emails, setEmails] = useState<null | string[]>(null)
+  const [docs, setdocs] = useState(null)
+  const [jsonHolder, setjsonHolder] = useState(null)
 
   const [state, dispatch] = useReducer(dashboardReducer, dashboardState)
   const navigate = useNavigate()
+
+  const { user, isLoaded } = useUser()
+  const email = user?.primaryEmailAddress?.emailAddress
 
   const { uploaded, previewingEmails, previewingTemplate, selectingLink, sending, template, link } = state
 
@@ -241,6 +248,35 @@ export function Dashboard() {
     dispatch({ type: 'SELECT_LINK', payload: { link } })
   }
 
+  async function invoke_bot(file: string) {
+    const test = 'adam@mail.com'
+    const { data } = await supabase.functions.invoke('use_sanity', {
+      body: { email: `${email}` },
+    })
+
+    console.log(data)
+
+    setdocs(data.docs?.[0]?.files)
+
+    const url = 'https://cdn.sanity.io/files/znsrdwgn/production/38310a6051945d11a2ede3637f49dcd894aaec5b.csv'
+
+    Papa.parse(url, {
+      download: true,
+      complete: (results) => {
+        console.log('done', results)
+        setjsonHolder(results)
+      },
+    })
+
+    console.log(jsonHolder)
+
+    return data
+  }
+
+  if (!isLoaded) {
+    return <p>...loading</p>
+  }
+
   return (
     <div className="">
       <Header />
@@ -248,14 +284,28 @@ export function Dashboard() {
 
       <div className="layout py-8">
         {/* <SideBar invoke_protocol={() => invoke_protocol()} /> */}
-        <div className=" pt-14">
-          {!uploaded && (
-            <UploadView uploadTextFile={uploadTextFile} sendEmails={sendEmails} emails={emails} setEmails={setEmails} />
-          )}
+        <div className=" ">
+          <Button onClick={() => invoke_bot(file)}>Use ai</Button>
+          {!uploaded && <UploadView uploadTextFile={uploadTextFile} />}
           {previewingEmails && <EmailPreview handleEndPreview={handleEndEmailPreview} emails={emails} />}
           {previewingTemplate && <SelectTemplate confirmTemplate={(template) => handleSelectTemplate(template)} />}
           {selectingLink && <LinkSelect confirmLink={(link) => handleSelectLink(link)} />}
           {sending && <PreviewSend handleSend={sendEmails} />}
+          {docs?.map((doc) => {
+            const url = doc.doc.asset._ref
+              .replace('file-', 'https://cdn.sanity.io/files/znsrdwgn/production/')
+              .replace('-csv', '.csv')
+            return (
+              <a href={url} target="_blank" key={doc._type} rel="noreferrer">
+                {url}
+              </a>
+            )
+          })}
+
+          {jsonHolder &&
+            jsonHolder.data[1].map((doc) => {
+              return <p>{doc}</p>
+            })}
 
           {/* <Routes>
           <Route

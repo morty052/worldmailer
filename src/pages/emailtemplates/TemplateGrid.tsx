@@ -36,7 +36,7 @@ function TemplateGrid({ confirmTemplate }: Props) {
   })
   const TemplateTable = {
     EMPLOYMENT: <Employment teamImage={company.logo} companyEmail={company.email} teamName={company.name} />,
-    NOTION: <NotionMagicLinkEmail />,
+    NOTION: <NotionMagicLinkEmail companyName={company.name} logo={company.logo} />,
   }
 
   const templates = [
@@ -194,8 +194,17 @@ function TemplateGrid({ confirmTemplate }: Props) {
               </div>
 
               {/* company image input*/}
-              <label htmlFor="">upload image</label>
-              <input onChange={(e) => uploadImagefile(e.target.files?.[0])} type="file" />
+              <div className="py-4">
+                <label className="font-medium text-sky-400" htmlFor="fileInput">
+                  upload company logo
+                </label>
+                <input
+                  id="fileInput"
+                  className="hidden"
+                  onChange={(e) => uploadImagefile(e.target.files?.[0])}
+                  type="file"
+                />
+              </div>
             </form>
             {/* FORM END */}
             <Button
